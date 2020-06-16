@@ -20,15 +20,51 @@ const queryStock = `SELECT r.ListaPrecioId listaPrecioId, p.ProductoId productoI
                 JOIN Productos p ON p.ProductoId=r.ProductoId
                 WHERE r.ProductoId IN ('146','835','836') AND r.ListaPrecioId = @input_parameter
                 UNION
-                SELECT 1 listaPrecioId, '840' productoId, 'Promo Salado' descProducto,
+                SELECT 1 listaPrecioId, '842' productoId, 'Promo Dia de la Bandera' descProducto,
                     SUM(CASE
-                        WHEN p.ProductoId = '196' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.150, 1)
-                        WHEN p.ProductoId = '809' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.150, 1)
-                        WHEN p.ProductoId = '7798056680545' THEN ROUND((r.Precio * (1 + (p.IVA/100))), 1)
+                        WHEN p.ProductoId = '7798056680033' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 1, 0)
+                        WHEN p.ProductoId = '206' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.305, 0)
                     END) precio
                 FROM RelProductosListasPrecios r
                 JOIN Productos p ON p.ProductoId=r.ProductoId
-                WHERE r.ProductoId IN ('196','7798056680545','809') AND r.ListaPrecioId = @input_parameter
+                WHERE r.ProductoId IN ('7798056680033','206') AND r.ListaPrecioId = @input_parameter
+                UNION
+                SELECT 1 listaPrecioId, '843' productoId, 'Promo Invierno' descProducto,
+                    SUM(CASE
+                        WHEN p.ProductoId = '7798056680361' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 1, 1)
+                        WHEN p.ProductoId = '843' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.155, 1)
+                    END) precio
+                FROM RelProductosListasPrecios r
+                JOIN Productos p ON p.ProductoId=r.ProductoId
+                WHERE r.ProductoId IN ('7798056680361','843') AND r.ListaPrecioId = @input_parameter
+                UNION
+                SELECT 1 listaPrecioId, '844' productoId, 'Promo Jamon' descProducto,
+                    SUM(CASE
+                        WHEN p.ProductoId = '809' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.250, 2)
+                        WHEN p.ProductoId = '844' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.200, 2)        
+                    END) precio
+                FROM RelProductosListasPrecios r
+                JOIN Productos p ON p.ProductoId=r.ProductoId
+                WHERE r.ProductoId IN ('809','844') AND r.ListaPrecioId = @input_parameter
+                UNION
+                SELECT 1 listaPrecioId, '845' productoId, 'Promo Salame' descProducto,
+                    SUM(CASE
+                        WHEN p.ProductoId = '809' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.250, 2)
+                        WHEN p.ProductoId = '845' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.150, 2)        
+                    END) precio
+                FROM RelProductosListasPrecios r
+                JOIN Productos p ON p.ProductoId=r.ProductoId
+                WHERE r.ProductoId IN ('809','845') AND r.ListaPrecioId = @input_parameter
+                UNION
+                SELECT 1 listaPrecioId, '846' productoId, 'Promo Dia del Padre' descProducto,
+                    SUM(CASE
+                        WHEN p.ProductoId = '7797283005497' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 1, 2)
+                        WHEN p.ProductoId = '841' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.200, 2)
+                        WHEN p.ProductoId = '846' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.500, 2)
+                    END) precio
+                FROM RelProductosListasPrecios r
+                JOIN Productos p ON p.ProductoId=r.ProductoId
+                WHERE r.ProductoId IN ('7797283005497','841','846') AND r.ListaPrecioId = @input_parameter
                 UNION
                 SELECT 1 listaPrecioId, p.ProductoId productoId, 'Promo Picnic' descProducto, ROUND((r.Precio/2) * (1 + (p.IVA/100)),2) precio
                 FROM RelProductosListasPrecios r

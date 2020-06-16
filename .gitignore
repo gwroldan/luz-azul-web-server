@@ -50,3 +50,6 @@ Thumbs.db
 # credentials
 /cert-zero-ssl
 /database/config-db.js
+*.crt
+*.key
+
