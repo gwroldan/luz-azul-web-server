@@ -4,11 +4,31 @@ const config = require('./config-db');
 const pool = new sql.ConnectionPool(config);
 const conn = pool.connect();
 
-const queryStock = `SELECT r.ListaPrecioId listaPrecioId, p.ProductoId productoId, p.Descripcion descProducto, ROUND(r.Precio * (1 + (p.IVA/100)),2) precio
+const queryStock = `WITH ArbolClasif (id, nombre, idpadre, level, sort)
+                AS 
+                (
+                    SELECT cp.ClasificacionProdId, CAST(cp.Descripcion AS VARCHAR(100)), 0, 0 as level, CAST(cp.Descripcion AS VARCHAR (100)) as sort
+                    FROM ClasificacionesProductos cp 
+                    WHERE cp.ClasificacionProdId IN (121,122,139) --Realizar Pedidos, Pizzas y Picadas
+                    UNION ALL
+                    SELECT cp.ClasificacionProdId, CAST(REPLICATE('|---', level + 1) + cp.Descripcion as varchar(100)), rac.ClasifProdIdPadre, level+1,
+                        CAST (sort + ' \\\\ ' + cp.Descripcion AS VARCHAR (100)) as sort
+                    FROM ClasificacionesProductos cp
+                    JOIN RelArbolClasifProductos rac ON rac.ClasifProdIdHijo = cp.ClasificacionProdId
+                    JOIN ArbolClasif ac ON rac.ClasifProdIdPadre = ac.id
+                )
+                SELECT r.ListaPrecioId listaPrecioId, p.ProductoId productoId, p.Descripcion descProducto, ROUND(r.Precio * (1 + (p.IVA/100)),2) precio
                 FROM RelProductosListasPrecios r
                 JOIN Productos p ON p.ProductoId=r.ProductoId
                 JOIN RelProductosClasificacionesProductos rpcp ON rpcp.ProductoId = p.ProductoId
-                WHERE rpcp.ClasificacionProdId = 293 AND r.ListaPrecioId = @input_parameter
+                JOIN ArbolClasif ac ON ac.id = rpcp.ClasificacionProdId
+                JOIN ClasificacionesProductos cp ON cp.ClasificacionProdId = ac.id
+                WHERE cp.Descripcion NOT LIKE ('%Papelera%') AND p.Inactivo=0 AND r.ListaPrecioId = @input_parameter
+                UNION
+                SELECT r.ListaPrecioId listaPrecioId, p.ProductoId productoId, p.Descripcion descProducto, ROUND(r.Precio * (1 + (p.IVA/100)),2) precio    
+                FROM RelProductosListasPrecios r
+                JOIN Productos p ON p.ProductoId=r.ProductoId
+                WHERE r.ProductoId IN ('814','833') AND r.ListaPrecioId = @input_parameter
                 UNION
                 SELECT 1 listaPrecioId, '836' productoId, 'Promo Tarta' descProducto, 
                     SUM(CASE
@@ -46,7 +66,8 @@ const queryStock = `SELECT r.ListaPrecioId listaPrecioId, p.ProductoId productoI
                 SELECT 1 listaPrecioId, p.ProductoId productoId, 'Promo Picnic' descProducto, ROUND((r.Precio/2) * (1 + (p.IVA/100)),2) precio
                 FROM RelProductosListasPrecios r
                 JOIN Productos p ON p.ProductoId=r.ProductoId
-                WHERE r.ProductoId='854' AND r.ListaPrecioId = @input_parameter`;
+                WHERE r.ProductoId='854' AND r.ListaPrecioId = @input_parameter
+                OPTION (maxrecursion 0)`;
 
 exports.getData = function getData(listaPrecioId) {
     return conn.then(conexion => {
