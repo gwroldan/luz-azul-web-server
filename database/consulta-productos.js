@@ -28,7 +28,7 @@ const queryStock = `WITH ArbolClasif (id, nombre, idpadre, level, sort)
                 SELECT r.ListaPrecioId listaPrecioId, p.ProductoId productoId, p.Descripcion descProducto, ROUND(r.Precio * (1 + (p.IVA/100)),2) precio    
                 FROM RelProductosListasPrecios r
                 JOIN Productos p ON p.ProductoId=r.ProductoId
-                WHERE r.ProductoId IN ('814','833','848') AND r.ListaPrecioId = @input_parameter
+                WHERE r.ProductoId IN ('814','833','842','843') AND r.ListaPrecioId = @input_parameter
                 UNION
                 SELECT 1 listaPrecioId, '836' productoId, 'Promo Tarta' descProducto, 
                     SUM(CASE
