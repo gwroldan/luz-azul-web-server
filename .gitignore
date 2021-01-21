@@ -48,7 +48,6 @@ testem.log
 Thumbs.db
 
 # credentials
-/cert-zero-ssl
 /lets-encrypt
 /database/config-db.js
 *.crt
