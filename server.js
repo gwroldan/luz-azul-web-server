@@ -78,8 +78,9 @@ http.createServer(app).listen(PORTHTTP, () => {
 });
 
 https.createServer({
-    key: fs.readFileSync('./cert-zero-ssl/private.key'),
-    cert: fs.readFileSync('./cert-zero-ssl/certificate.crt')
+  key: fs.readFileSync('./lets-encrypt/privkey.pem'),
+  cert: fs.readFileSync('./lets-encrypt/cert.pem'),
+  ca: fs.readFileSync('./lets-encrypt/chain.pem')
 }, app).listen(PORTHTTPS, function(){
-    console.log('My https server listening on port ' + PORTHTTPS + '...');
+  console.log('My https server listening on port ' + PORTHTTPS + '...');
 });
