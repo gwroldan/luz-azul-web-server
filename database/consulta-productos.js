@@ -18,7 +18,7 @@ const queryStock = `WITH ArbolClasif (id, nombre, idpadre, level, sort)
                     JOIN ArbolClasif ac ON rac.ClasifProdIdPadre = ac.id
                 )
                 SELECT r.ListaPrecioId listaPrecioId, p.ProductoId productoId, p.Descripcion descProducto, ROUND(r.Precio * (1 + (p.IVA/100)),2) precio
-                FROM RelProductosListasPrecios r
+                FROM RelProductosListasPreciosView r
                 JOIN Productos p ON p.ProductoId=r.ProductoId
                 JOIN RelProductosClasificacionesProductos rpcp ON rpcp.ProductoId = p.ProductoId
                 JOIN ArbolClasif ac ON ac.id = rpcp.ClasificacionProdId
@@ -26,7 +26,7 @@ const queryStock = `WITH ArbolClasif (id, nombre, idpadre, level, sort)
                 WHERE cp.Descripcion NOT LIKE ('%Papelera%') AND p.Inactivo=0 AND r.ListaPrecioId = @input_parameter
                 UNION
                 SELECT r.ListaPrecioId listaPrecioId, p.ProductoId productoId, p.Descripcion descProducto, ROUND(r.Precio * (1 + (p.IVA/100)),2) precio    
-                FROM RelProductosListasPrecios r
+                FROM RelProductosListasPreciosView r
                 JOIN Productos p ON p.ProductoId=r.ProductoId
                 WHERE r.ProductoId IN ('814','833','843') AND r.ListaPrecioId = @input_parameter
                 UNION
@@ -36,7 +36,7 @@ const queryStock = `WITH ArbolClasif (id, nombre, idpadre, level, sort)
                         WHEN p.ProductoId = '835' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.500, 2)
                         WHEN p.ProductoId = '836' THEN ROUND((r.Precio * (1 + (p.IVA/100))), 2)
                     END) precio
-                FROM RelProductosListasPrecios r
+                FROM RelProductosListasPreciosView r
                 JOIN Productos p ON p.ProductoId=r.ProductoId
                 WHERE r.ProductoId IN ('146','835','836') AND r.ListaPrecioId = @input_parameter
                 UNION
@@ -45,7 +45,7 @@ const queryStock = `WITH ArbolClasif (id, nombre, idpadre, level, sort)
                         WHEN p.ProductoId = '809' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.250, 2)
                         WHEN p.ProductoId = '844' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.200, 2)        
                     END) precio
-                FROM RelProductosListasPrecios r
+                FROM RelProductosListasPreciosView r
                 JOIN Productos p ON p.ProductoId=r.ProductoId
                 WHERE r.ProductoId IN ('809','844') AND r.ListaPrecioId = @input_parameter
                 UNION
@@ -54,12 +54,12 @@ const queryStock = `WITH ArbolClasif (id, nombre, idpadre, level, sort)
                         WHEN p.ProductoId = '809' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.250, 2)
                         WHEN p.ProductoId = '845' THEN ROUND((r.Precio * (1 + (p.IVA/100))) * 0.150, 2)        
                     END) precio
-                FROM RelProductosListasPrecios r
+                FROM RelProductosListasPreciosView r
                 JOIN Productos p ON p.ProductoId=r.ProductoId
                 WHERE r.ProductoId IN ('809','845') AND r.ListaPrecioId = @input_parameter                
                 UNION
                 SELECT 1 listaPrecioId, p.ProductoId productoId, 'Promo Picnic' descProducto, ROUND((r.Precio/2) * (1 + (p.IVA/100)),2) precio
-                FROM RelProductosListasPrecios r
+                FROM RelProductosListasPreciosView r
                 JOIN Productos p ON p.ProductoId=r.ProductoId
                 WHERE r.ProductoId='854' AND r.ListaPrecioId = @input_parameter
                 OPTION (maxrecursion 0)`;
